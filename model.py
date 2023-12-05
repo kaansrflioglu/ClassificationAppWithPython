@@ -1,8 +1,10 @@
 import torch.nn as nn
 
+numClasses = 2
+
 
 class SimpleCNN(nn.Module):
-    def __init__(self, num_classes=3, input_channels=3):
+    def __init__(self, num_classes=numClasses, input_channels=3):
         super(SimpleCNN, self).__init__()
         self.conv1 = nn.Conv2d(input_channels, 64, kernel_size=3, stride=1, padding=1)
         self.relu = nn.ReLU()
