@@ -12,3 +12,5 @@
  - [ ] If you are using an insufficient dataset, you can augment your
        Specify the number of classes in the dataset you will classify in the "numClasses" variable in the "model.py" file. For example;
        `numClasses = 3` 
+
+
