@@ -2,8 +2,10 @@ import os
 import cv2
 from keras.preprocessing.image import ImageDataGenerator
 from tqdm import tqdm
+import json
 
-from main import data_path_main
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
 
 
 def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50):
@@ -64,6 +66,6 @@ def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50):
                 print(e)
 
 
-input_directory = data_path_main
+input_directory = config["data_path_main"]
 output_directory = input_directory + "_augmented"
 augment_data(input_directory, output_directory)
