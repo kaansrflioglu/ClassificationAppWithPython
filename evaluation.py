@@ -25,6 +25,9 @@ def evaluate(model, test_loader, device):
                 class_total[label] += 1
 
     accuracy = 100 * correct / total
+
+    save_file = "evaluation_results.txt"
+
     print(f"Test Accuracy: {accuracy:.2f}%")
 
     print("\nClass-wise Accuracy:")
@@ -32,6 +35,13 @@ def evaluate(model, test_loader, device):
         class_name = test_loader.dataset.classes[i]
         class_acc = 100 * class_correct[i] / class_total[i] if class_total[i] > 0 else 0
         print(f"Accuracy of {class_name}: {class_acc:.2f}%")
+    with open(save_file, "a") as file:
+        file.write(f"Test Accuracy: {accuracy:.2f}%\n")
+        file.write("\nClass-wise Accuracy:\n")
+        for i in range(len(test_loader.dataset.classes)):
+            class_name = test_loader.dataset.classes[i]
+            class_acc = 100 * class_correct[i] / class_total[i] if class_total[i] > 0 else 0
+            file.write(f"Accuracy of {class_name}: {class_acc:.2f}%\n")
 
 
 def evaluate_main(data_path):

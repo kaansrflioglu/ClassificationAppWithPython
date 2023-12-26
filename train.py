@@ -60,12 +60,14 @@ def train_main(data_path):
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     criterion = nn.CrossEntropyLoss()
 
-    epochs = 10
+    save_file = "training_results.txt"
+    epochs = 2
     for epoch in range(epochs):
         train(model, train_loader, optimizer, criterion, device)
         val_loss, val_accuracy = validate(model, val_loader, criterion, device)
         print(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%")
-
+        with open(save_file, "a") as file:
+            file.write(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%\n")
     torch.save(model.state_dict(), "model.pth")
 
 
