@@ -10,7 +10,7 @@ with open("config.json", "r") as config_file:
 
 
 class ImagePreprocessor:
-    def __init__(self, input_size=(config["input_size"], config["input_size"]), contrast_factor=1.5):
+    def __init__(self, input_size=(config["input-size"], config["input-size"]), contrast_factor=1.5):
         self.input_size = input_size
         self.contrast_factor = contrast_factor
 
@@ -31,7 +31,7 @@ def load_and_preprocess_image(image_path, preprocessor):
     return preprocessed_image
 
 
-def main(data_path):
+def main():
     data_path = data_path_main
     preprocessor = ImagePreprocessor()
 
@@ -42,4 +42,4 @@ def main(data_path):
 
 
 if __name__ == "__main__":
-    main(data_path_main)
+    main()

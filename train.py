@@ -17,6 +17,9 @@ def train(model, train_loader, optimizer, criterion, device):
         inputs, labels = inputs.to(device), labels.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
+        if labels.size(0) != outputs.size(0):
+            labels = labels[:outputs.size(0)]
+
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -46,10 +49,11 @@ batchSize = config["batch-size"]
 
 
 def train_main(data_path):
-    transform = transforms.Compose([transforms.Resize((input_size, input_size)),
-                                    transforms.ToTensor(),
-                                    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                         std=[0.229, 0.224, 0.225])])
+    transform = transforms.Compose([
+        transforms.Resize((input_size, input_size)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
 
     dataset = datasets.ImageFolder(root=data_path, transform=transform)
     total_size = len(dataset)
@@ -59,14 +63,18 @@ def train_main(data_path):
 
     train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
 
-    train_loader = DataLoader(train_dataset, batch_size=batchSize, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batchSize, shuffle=False)
+    batch_size = config["batch-size"]
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     model = SimpleCNN(num_classes=len(dataset.classes))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    optimizer = optim.Adam(model.parameters(), lr=config["learning-rate"])
+    learning_rate = config["learning-rate"]
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
     criterion = nn.CrossEntropyLoss()
 
     save_file = "training_results.txt"

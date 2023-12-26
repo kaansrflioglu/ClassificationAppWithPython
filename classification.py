@@ -64,7 +64,6 @@ class ImageClassifierGUI:
         _, predicted_class = output.max(1)
         predicted_class_idx = predicted_class.item()
 
-        # Get the list of folder names in data_path_main
         class_folders = [folder for folder in os.listdir(data_path_main) if
                          os.path.isdir(os.path.join(data_path_main, folder))]
 
