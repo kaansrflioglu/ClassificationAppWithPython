@@ -2,6 +2,10 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from model import SimpleCNN
+import json
+
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
 
 
 def evaluate(model, test_loader, device):
@@ -44,6 +48,9 @@ def evaluate(model, test_loader, device):
             file.write(f"Accuracy of {class_name}: {class_acc:.2f}%\n")
 
 
+batchSize = config["batch-size"]
+
+
 def evaluate_main(data_path):
     transform = transforms.Compose([transforms.Resize((224, 224)),
                                     transforms.ToTensor(),
@@ -51,7 +58,7 @@ def evaluate_main(data_path):
                                                          std=[0.229, 0.224, 0.225])])
 
     test_dataset = datasets.ImageFolder(root=data_path, transform=transform)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batchSize, shuffle=False)
 
     model = SimpleCNN()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

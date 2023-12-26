@@ -4,6 +4,11 @@ from torch import nn
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, random_split
 from model import SimpleCNN
+import json
+
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
+epochs = config["epochs"]
 
 
 def train(model, train_loader, optimizer, criterion, device):
@@ -36,8 +41,12 @@ def validate(model, val_loader, criterion, device):
     return val_loss / len(val_loader), accuracy
 
 
+input_size = config["input-size"]
+batchSize = config["batch-size"]
+
+
 def train_main(data_path):
-    transform = transforms.Compose([transforms.Resize((224, 224)),
+    transform = transforms.Compose([transforms.Resize((input_size, input_size)),
                                     transforms.ToTensor(),
                                     transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                          std=[0.229, 0.224, 0.225])])
@@ -50,24 +59,24 @@ def train_main(data_path):
 
     train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
 
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batchSize, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batchSize, shuffle=False)
 
     model = SimpleCNN(num_classes=len(dataset.classes))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = optim.Adam(model.parameters(), lr=config["learning-rate"])
     criterion = nn.CrossEntropyLoss()
 
     save_file = "training_results.txt"
-    epochs = 2
     for epoch in range(epochs):
         train(model, train_loader, optimizer, criterion, device)
         val_loss, val_accuracy = validate(model, val_loader, criterion, device)
         print(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%")
         with open(save_file, "a") as file:
-            file.write(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%\n")
+            file.write(
+                f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%\n")
     torch.save(model.state_dict(), "model.pth")
 
 

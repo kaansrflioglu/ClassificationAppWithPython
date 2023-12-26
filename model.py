@@ -1,7 +1,15 @@
 import torch.nn as nn
+import json
+import os
 
-numClasses = 3
-inputChannels = 3
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
+
+data_path_main = config["data_path_main"]
+inputChannels = config["inputChannels"]
+
+classes = [d for d in os.listdir(data_path_main) if os.path.isdir(os.path.join(data_path_main, d))]
+numClasses = len(classes)
 
 
 class SimpleCNN(nn.Module):

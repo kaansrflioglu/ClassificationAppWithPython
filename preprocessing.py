@@ -2,12 +2,15 @@ import os
 import torch
 from torchvision import transforms
 from PIL import Image
-
+import json
 from main import data_path_main
+
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
 
 
 class ImagePreprocessor:
-    def __init__(self, input_size=(224, 224), contrast_factor=1.5):
+    def __init__(self, input_size=(config["input_size"], config["input_size"]), contrast_factor=1.5):
         self.input_size = input_size
         self.contrast_factor = contrast_factor
 
