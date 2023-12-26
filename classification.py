@@ -22,7 +22,7 @@ class ImageClassifierGUI:
         self.master = master
         self.master.title("Image Classifier")
         self.model = SimpleCNN()
-        self.model.load_state_dict(torch.load("model.pth"))
+        self.model.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
         self.model.eval()
         self.create_widgets()
         self.center_window()
@@ -72,14 +72,18 @@ class ImageClassifierGUI:
         else:
             predicted_class_name = "Unknown Class"
 
-        return predicted_class_name
+        probabilities = torch.nn.functional.softmax(output, dim=1)[0]
+        confidence_scores = [f"{class_folders[i]}: {probabilities[i]:.2%}" for i in range(len(class_folders))]
+
+        result_text = f"{predicted_class_name}\n\n" + "\n".join(confidence_scores)
+        return result_text
 
     def center_window(self):
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
-        self.master.geometry(f"280x360+"
+        self.master.geometry(f"280x420+"
                              f"{(screen_width - 280) // 2}+"
-                             f"{(screen_height - 360) // 2}")
+                             f"{(screen_height - 420) // 2}")
 
 
 if __name__ == "__main__":
