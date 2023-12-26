@@ -1,5 +1,5 @@
 {
-  "data_path_main": "dataset_*",
+  "data_path_main": "dataset_*****",
   "inputChannels": 3,
   "epochs": 10,
   "input-size": 224,
