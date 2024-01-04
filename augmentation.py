@@ -6,16 +6,17 @@ import json
 
 with open("config.json", "r") as config_file:
     config = json.load(config_file)
+img_size = config['input-size']
 
 
-def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50):
+def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50, target_size=(img_size, img_size)):
     datagen = ImageDataGenerator(
         rescale=1. / 255,
-        rotation_range=20,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        shear_range=0.2,
-        zoom_range=0.2,
+        rotation_range=5,
+        width_shift_range=0.05,
+        height_shift_range=0.05,
+        shear_range=0.05,
+        zoom_range=0.05,
         horizontal_flip=True,
         fill_mode='nearest'
     )
@@ -38,12 +39,14 @@ def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50):
             try:
                 img = cv2.imread(img_path)
                 if img is None or img.size == 0:
-                    print(f"Uyarı: Görüntü okunamadı veya boş: {img_path}")
+                    print(f"Warning: Image could not be read or is empty: {img_path}")
                     continue
 
                 if img.shape[0] < min_size or img.shape[1] < min_size:
-                    print(f"Uyarı: Görüntü boyutu çok küçük: {img_path}")
+                    print(f"Warning: Image size too small: {img_path}")
                     continue
+
+                img = cv2.resize(img, target_size)
 
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 img = img.reshape((1,) + img.shape)
@@ -62,7 +65,7 @@ def augment_data(input_dir, output_dir, augmentation_factor=5, min_size=50):
                     if j >= augmentation_factor:
                         break
             except Exception as e:
-                print(f"Hata: Görüntü işlenirken hata oluştu: {img_path}")
+                print(f"Error: An error occurred while processing the image: {img_path}")
                 print(e)
 
 
