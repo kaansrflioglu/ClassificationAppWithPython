@@ -29,16 +29,16 @@ class ImageClassifierGUI:
         root.resizable(width=False, height=False)
 
     def create_widgets(self):
-        self.result_label = tk.Label(self.master, text="Sınıflandırma Sonucu: ")
+        self.result_label = tk.Label(self.master, text="Classification Result: ")
         self.result_label.pack(pady=16)
         self.image_label = tk.Label(self.master, borderwidth=2, relief="solid")
         self.image_label.pack()
-        self.select_button = tk.Button(self.master, text="Resim Seç", command=self.load_image,
+        self.select_button = tk.Button(self.master, text="Select Image", command=self.load_image,
                                        borderwidth=2, relief="groove")
         self.select_button.pack(side='bottom', pady=26)
 
     def load_image(self):
-        file_path = filedialog.askopenfilename(title="Resim Seç", filetypes=[("Image files", "*.jpg;*.png")])
+        file_path = filedialog.askopenfilename(title="Select Image", filetypes=[("Image files", "*.jpg;*.png")])
         if not file_path:
             return
         image = Image.open(file_path)
@@ -47,7 +47,7 @@ class ImageClassifierGUI:
         self.image_label.config(image=photo)
         self.image_label.image = photo
         result = self.classify_image(file_path)
-        self.result_label.config(text=f"Sınıflandırma Sonucu: {result}")
+        self.result_label.config(text=f"Classification Result: {result}")
 
     def classify_image(self, image_path):
         transform = transforms.Compose([
