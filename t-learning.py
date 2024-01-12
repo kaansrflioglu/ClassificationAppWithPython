@@ -94,7 +94,12 @@ for epoch in range(epochs):
                 class_correct[class_name] += class_predicted.eq(i).sum().item()
 
         val_accuracy = 100 * correct / total
+        save_file1 = "t-learning_training_results.txt"
         print(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%")
+        with open(save_file1, "a") as file:
+            file.write(
+                f"Epoch {epoch + 1}/{epochs}, Validation Loss: {val_loss}, Validation Accuracy: {val_accuracy}%\n")
+
 
 overall_accuracy = 100 * correct / total
 
@@ -104,5 +109,14 @@ for class_name in class_names:
     class_acc_rounded = round(class_acc, 2)
     print(f"Accuracy of {class_name}: {class_acc_rounded}%")
 print(f"\nOverall Accuracy: {round(overall_accuracy, 2)}%")
+
+save_file2 = "t-learning_evaluation_results.txt"
+with open(save_file2, "a") as file:
+    file.write(f"Overall Accuracy: {round(overall_accuracy, 2)}%\n")
+    file.write("\nClass-wise Accuracy:\n")
+    for class_name in class_names:
+        class_acc = 100 * class_correct[class_name] / class_total[class_name]
+        class_acc_rounded = round(class_acc, 2)
+        file.write(f"Accuracy of {class_name}: {class_acc_rounded}%\n")
 
 torch.save(transfer_model.state_dict(), "t-model.pth")
