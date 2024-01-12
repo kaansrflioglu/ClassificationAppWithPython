@@ -18,18 +18,15 @@ learning_rate = config["learning-rate"]
 input_channels = config["inputChannels"]
 
 pretrained_model = models.resnet18(pretrained=True)
-
-
 SimpleCNN().load_state_dict(torch.load("model.pth"))
 
 transfer_model = nn.Sequential(
-    *list(pretrained_model.children())[:-1],  # Önceki önceden eğitilmiş modelin son katmanını kaldırın
+    *list(pretrained_model.children())[:-1],
     nn.Flatten(),
-    nn.Linear(pretrained_model.fc.in_features, SimpleCNN().fc2.in_features),  # Giriş boyutunu eşleştirin
-    nn.ReLU(),  # Gerekiyorsa aktivasyon ekleyin
-    nn.Linear(SimpleCNN().fc2.in_features, input_channels)  # Çıkış boyutunu eşleştirin
+    nn.Linear(pretrained_model.fc.in_features, SimpleCNN().fc2.in_features),
+    nn.ReLU(),
+    nn.Linear(SimpleCNN().fc2.in_features, input_channels)
 )
-
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 transfer_model.to(device)
@@ -47,7 +44,6 @@ transform_val = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
-
 
 dataset = datasets.ImageFolder(root=data_path_main, transform=transform_train)
 class_names = dataset.classes
@@ -102,11 +98,11 @@ for epoch in range(epochs):
 
 overall_accuracy = 100 * correct / total
 
-print("\nClass-wise accuracies at the end of training:\n")
+print("\nClass-wise Accuracy:\n")
 for class_name in class_names:
     class_acc = 100 * class_correct[class_name] / class_total[class_name]
     class_acc_rounded = round(class_acc, 2)
-    print(f"{class_name} Accuracy: {class_acc_rounded}%")
+    print(f"Accuracy of {class_name}: {class_acc_rounded}%")
 print(f"\nOverall Accuracy: {round(overall_accuracy, 2)}%")
 
 torch.save(transfer_model.state_dict(), "t-model.pth")

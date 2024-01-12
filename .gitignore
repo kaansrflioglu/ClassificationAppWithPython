@@ -4,4 +4,4 @@ dataset*/
 evaluation_results.txt
 training_results.txt
 model.pth
-t-learning_model.pth
+t-model.pth
