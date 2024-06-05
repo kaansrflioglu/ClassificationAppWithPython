@@ -1,6 +1,6 @@
 import os
 import cv2
-from keras.preprocessing.image import ImageDataGenerator
+from keras_preprocessing.image import ImageDataGenerator
 from tqdm import tqdm
 import json
 

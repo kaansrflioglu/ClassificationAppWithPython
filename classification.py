@@ -29,13 +29,29 @@ class ImageClassifierGUI:
         root.resizable(width=False, height=False)
 
     def create_widgets(self):
-        self.result_label = tk.Label(self.master, text="Classification Result: ")
-        self.result_label.pack(pady=16)
-        self.image_label = tk.Label(self.master, borderwidth=2, relief="solid")
-        self.image_label.pack()
-        self.select_button = tk.Button(self.master, text="Select Image", command=self.load_image,
-                                       borderwidth=2, relief="groove")
-        self.select_button.pack(side='bottom', pady=26)
+        widget_style = {
+            'font': ("Helvetica", 12),
+            'bg': '#f0f0f0',
+            'fg': '#333',
+        }
+
+        # Result Label
+        self.result_label = tk.Label(self.master, text="Classification Result: ", **widget_style)
+        self.result_label.pack(pady=20)
+
+        self.image_label = tk.Label(self.master, borderwidth=2, relief="solid", **widget_style)
+
+        self.image_label.pack(pady=10, padx=10)
+
+        self.select_button = tk.Button(self.master, text="Select Image", command=self.load_image, **widget_style)
+        self.select_button.config(
+            borderwidth=0,
+            highlightthickness=0,
+            bd=0,
+            bg="#4CAF50",
+            fg="white",
+        )
+        self.select_button.pack(side='bottom', pady=30, ipadx=15, ipady=8)  # Increased padding, button size
 
     def load_image(self):
         file_path = filedialog.askopenfilename(title="Select Image", filetypes=[("Image files", "*.jpg;*.png")])
@@ -81,12 +97,22 @@ class ImageClassifierGUI:
     def center_window(self):
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
-        self.master.geometry(f"280x420+"
-                             f"{(screen_width - 280) // 2}+"
-                             f"{(screen_height - 420) // 2}")
+        preferred_width = 360
+        preferred_height = 500
+        if preferred_width > screen_width * 0.8:
+            preferred_width = int(screen_width * 0.8)
+        if preferred_height > screen_height * 0.8:
+            preferred_height = int(screen_height * 0.8)
+        x = (screen_width - preferred_width) // 2
+        y = (screen_height - preferred_height) // 2
+        self.master.geometry(f"{preferred_width}x{preferred_height}+{x}+{y}")
+        self.master.resizable(True, True)
+        self.master.minsize(360, 500)
+        self.master.maxsize(screen_width, screen_height)
 
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.wm_attributes('-toolwindow', 'True')
     app = ImageClassifierGUI(root)
     root.mainloop()
